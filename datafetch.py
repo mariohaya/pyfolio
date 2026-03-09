@@ -1,0 +1,30 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Mon Mar  9 11:45:41 2026
+
+@author: mario
+"""
+# libs
+import yfinance as yf
+import pandas as pd
+
+print("Enter ticker")
+name = input("Ticker: ")
+
+# ticker, date range (yyyy-mm-dd)
+ticker = "AAPL"
+start_date = "2025-12-01"
+end_date= "2026-01-10"
+
+df = yf.download(
+    ticker,
+    start=start_date,
+    end=end_date,
+    auto_adjust=False,
+    progress=False
+    )
+
+print(df.head())
+
+
