@@ -5,15 +5,16 @@ Created on Mon Mar  9 11:45:41 2026
 
 @author: mario
 """
-# libs
+##### libs
 import yfinance as yf
 import pandas as pd
 
-print("Enter ticker")
+##### Initial input
+print("Enter ticker(s)")
 name = input("Ticker: ")
 
 # ticker, date range (yyyy-mm-dd)
-ticker = "AAPL"
+ticker = name.strip().upper()
 start_date = "2025-12-01"
 end_date= "2026-01-10"
 
