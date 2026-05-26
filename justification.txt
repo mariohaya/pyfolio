@@ -1,0 +1,7 @@
+How to approach lookbacks in portfolio construction after market crashes
+
+Pástor and Stambaugh show that long return histories can still be useful even when the equity premium has structural breaks
+
+while Pettenuzzo and Timmermann show that asset allocation changes materially when breaks are accounted for.
+
+Can break-aware models improve out-of-sample forecasts?:
