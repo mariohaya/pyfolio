@@ -56,7 +56,7 @@ print(num_assets)
 ## weights
 fixed_weights = np.array([1 / num_assets] * num_assets)
 fixed_portfolio_return = np.dot(fixed_weights, mean_returns)
-print("\n Expected portfolio returns (fixed weights)"
+print("\n Expected portfolio returns (fixed weights)")
 print(fixed_portfolio_return)
 
 
