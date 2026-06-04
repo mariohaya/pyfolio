@@ -22,7 +22,7 @@ start_date = end_date.replace(year=end_date.year - 5) # 5yr window
 start_date = start_date.strftime("%Y-%m-%d")
 end_date = end_date.strftime("%Y-%m-%d")
 
-rf_rate = input("\nRisk-free rate, e.g. (0.03):")
+rf_rate = float(input("\nRisk-free rate, e.g. (0.03): "))
 
 df = yf.download(
     ticker, #t
@@ -71,6 +71,39 @@ print("\n The expected yearly return of your portfolio is", fpr_percent, "volati
 def p_return(weights):
     return np.dot(weights, mean_returns)
 
+def p_sd(weights):
+    return np.sqrt(np.dot(weights.T, np.dot(matrix, weights))) # MMULT
 
+def n_sharpe(weights):
+    return -((p_return(weights) - rf_rate) / p_sd(weights))
+
+### constraints 
+## no leverage / short selling allowed 
+bounds = tuple((0,1) for asset in range(num_assets))
+
+## weight sum = 1
+constraints = ({"type": "eq",
+                "fun": lambda weights: np.sum(weights) - 1}) 
+
+optimization = minimize(
+    n_sharpe,
+    fixed_weights,
+    method="SLSQP",
+    bounds=bounds,
+    constraints=constraints)
+
+optimal_weights = optimization.x
+optimal_return = p_return(optimal_weights)
+optimal_volatility = p_sd(optimal_weights)
+optimal_sharpe = (optimal_return - rf_rate) / optimal_volatility
+
+print("\nOPTIMAL ASSET WEIGHTS:")
+for ticker, weight in zip(mean_returns.index, optimal_weights):
+    print(f"{ticker}: {weight:.2%}")
+
+
+print("Expected yearly return:", format(optimal_return, ".2%"))
+print("Expected yearly volatility:", format(optimal_volatility, ".2%"))
+print("Sharpe ratio:", round(optimal_sharpe, 2))
 
 
