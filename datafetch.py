@@ -101,9 +101,3 @@ print("\nOPTIMAL ASSET WEIGHTS:")
 for ticker, weight in zip(mean_returns.index, optimal_weights):
     print(f"{ticker}: {weight:.2%}")
 
-
-print("Expected yearly return:", format(optimal_return, ".2%"))
-print("Expected yearly volatility:", format(optimal_volatility, ".2%"))
-print("Sharpe ratio:", round(optimal_sharpe, 2))
-
-
