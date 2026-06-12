@@ -15,29 +15,56 @@ import numpy as np
 
 ## Initial inputs
 print("Enter ticker(s)")
-name = input("Ticker: ")
-ticker = name.strip().upper() # tickers
 end_date = datetime.today()
 start_date = end_date.replace(year=end_date.year - 5) # 5yr window
 start_date = start_date.strftime("%Y-%m-%d")
 end_date = end_date.strftime("%Y-%m-%d")
 
-rf_rate = float(input("\nRisk-free rate, e.g. (0.03): "))
+while True:
+    name = input("Ticker: ")
+    ticker = name.strip().upper()
+    df = yf.download(
+            ticker, #t
+            start=start_date, #s
+            end=end_date, #e
+            auto_adjust=False, 
+            progress=False)
+    if df.empty or "Adj Close" not in df.columns:
+        print("Invalid ticker(s), try again.")
+    else:
+        prices = df["Adj Close"]
+        dr = prices.pct_change().dropna()
 
-df = yf.download(
-    ticker, #t
-    start=start_date, #s
-    end=end_date, #e
-    auto_adjust=False, 
-    progress=False
-    )
+        if dr.empty:
+            print("Invalid ticker(s), try again.")
+        else:
+            break
 
-#daily returns
-prices = df["Adj Close"]
-dr = prices.pct_change().dropna()
+## select rf rate
+rf_rate_input = input("\nRisk-free rate, e.g. (0.03): ").strip()
 
-# avg annualized returns
-mean_returns = dr.mean() * 252
+if not rf_rate_input.replace(".", "", 1).isdigit():
+    print("Invalid input, defaulting to 0.03.")
+    rf_rate = 0.03
+else:
+    rf_rate = float(rf_rate_input)
+
+## select return frequency
+return_frequency = input("\nSelect return frequency, e.g. 'daily'/'monthly':"
+                         ).strip().lower()
+if return_frequency not in ["daily", "monthly"]:
+    print("Invalid input, defaulting to daily returns.")
+    return_frequenct = "daily"
+
+# returns calculation
+if return_frequency == "daily":
+    returns = dr
+    periods_per_year = 252
+else:
+    returns = prices.resample("M").last().pct_change().dropna()
+    periods_per_year = 12
+
+mean_returns = returns.mean() * periods_per_year
 num_assets = len(mean_returns)
 
 print("\n INDIVIDUAL ASSET (annualized) EXPECTED RETURNS:")
